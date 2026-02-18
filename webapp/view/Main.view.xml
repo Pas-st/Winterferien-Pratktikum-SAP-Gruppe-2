@@ -1,7 +1,9 @@
 <mvc:View
     controllerName="my.app.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
 
     <SplitContainer id="mainSplit">
 
@@ -9,23 +11,66 @@
         <masterPages>
             <Page title="Finanzübersicht">
                 <List mode="SingleSelectMaster" select="onMenuSelect">
-                    <StandardListItem title="Dashboard" type="Active" />
-                    <StandardListItem title="Transaktionen" type="Active" />
-                    <StandardListItem title="Berichte" type="Active" />
+                    <StandardListItem title="Dashboard" type="Active"/>
+                    <StandardListItem title="Transaktionen" type="Active"/>
+                    <StandardListItem title="Berichte" type="Active"/>
                 </List>
             </Page>
         </masterPages>
 
-        <!-- RECHTER INHALT -->
+        <!-- RECHTE SEITE -->
         <detailPages>
-            <Page title="Main View">
+            <Page title="Dashboard">
                 <content>
-                    <Button text="Zur Second View" press="onGoSecond"/>
-                    <Button text="Zur Third View" press="onGoThird"/>
+                    <VBox class="sapUiContentPadding" width="100%">
+
+                        <!-- KPI Karten -->
+                        <HBox justifyContent="SpaceBetween" width="100%">
+                            <Panel headerText="Gesamteinnahmen" width="32%">
+                                <Title text="19.550 €" titleStyle="H2"/>
+                            </Panel>
+                            <Panel headerText="Gesamtausgaben" width="32%">
+                                <Title text="30.406 €" titleStyle="H2"/>
+                            </Panel>
+                            <Panel headerText="Nettogewinn" width="32%">
+                                <Title text="-10.856 €" titleStyle="H2"/>
+                            </Panel>
+                        </HBox>
+
+                        <!-- Linienchart -->
+                        <Panel headerText="Finanzübersicht – aktueller Monat"
+                               class="sapUiSmallMarginTop">
+                            <VBox>
+                                <core:HTML id="chartContainer"/>
+                            </VBox>
+                        </Panel>
+
+                        <!-- Tabelle -->
+                        <Panel headerText="Buchungen – letzte 30 Tage"
+                               class="sapUiSmallMarginTop">
+                            <Table items="{/transactions}">
+                                <columns>
+                                    <Column><Text text="Datum"/></Column>
+                                    <Column><Text text="Beschreibung"/></Column>
+                                    <Column><Text text="Betrag"/></Column>
+                                </columns>
+
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{date}"/>
+                                            <Text text="{text}"/>
+                                            <Text text="{amount}"/>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
+                        </Panel>
+
+                    </VBox>
                 </content>
             </Page>
         </detailPages>
 
     </SplitContainer>
-
 </mvc:View>
