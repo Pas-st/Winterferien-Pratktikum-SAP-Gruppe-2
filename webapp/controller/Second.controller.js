@@ -36,6 +36,15 @@ sap.ui.define([
         },
 
         // =========================
+        // SORTIEREN NACH DATUM
+        // =========================
+        _sortEntriesByDate: function (aEntries) {
+            return aEntries.sort(function (a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
+        },
+
+        // =========================
         // ADD / EDIT DIALOG
         // =========================
         _openEntryDialog: function (oContext, iIndex) {
@@ -86,6 +95,9 @@ sap.ui.define([
                         aEntries.push(oData);
                     }
 
+                    // 🔽 SORTIERUNG NACH DATUM
+                    this._sortEntriesByDate(aEntries);
+
                     oModel.setProperty("/entries", aEntries);
                     oDialog.close();
                 }
@@ -114,7 +126,7 @@ sap.ui.define([
                     content: [
                         new Label({ text: "Datum" }),
                         oDatePicker,
-                        new Label({ text: "Betrag" }),
+                        new Label({ text: "Betrag (€)" }),
                         oAmountInput,
                         new Label({ text: "Beschreibung" }),
                         oDescriptionInput,
@@ -157,6 +169,10 @@ sap.ui.define([
             const aEntries = oModel.getProperty("/entries");
 
             aEntries.splice(iIndex, 1);
+
+            // Optional: nach Löschen erneut sortieren
+            this._sortEntriesByDate(aEntries);
+
             oModel.setProperty("/entries", aEntries);
         }
     });

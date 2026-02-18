@@ -18,7 +18,7 @@
 
                 <columns>
                     <Column><Text text="Datum"/></Column>
-                    <Column><Text text="Betrag"/></Column>
+                    <Column><Text text="Betrag (€)"/></Column>
                     <Column><Text text="Einnahme/Ausgabe"/></Column>
                     <Column><Text text="Beschreibung"/></Column>
                     <Column width="5rem"/>
@@ -42,7 +42,6 @@
                                     type="Transparent"
                                     press="onEditEntry"/>
                             </HBox>
-
                         </cells>
                     </ColumnListItem>
                 </items>
