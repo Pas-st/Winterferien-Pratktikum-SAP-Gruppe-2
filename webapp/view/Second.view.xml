@@ -19,7 +19,7 @@
             </Page>
         </masterPages>
         <detailPages>
-           <Page title="Second View">
+           <Page title="Transaktionen">
                 <content>
 
                     <Button
