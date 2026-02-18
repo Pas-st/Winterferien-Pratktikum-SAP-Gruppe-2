@@ -25,14 +25,31 @@ sap.ui.define([
 
     return Controller.extend("my.app.controller.Second", {
 
-        onInit: function () {
-            this.getView().setModel(new JSONModel({
-                entries: []
-            }));
+        onGoSecond: function () {
+            this.getOwnerComponent().getRouter().navTo("second");
         },
 
-        onBack: function () {
-            this.getOwnerComponent().getRouter().navTo("main");
+        onGoThird: function () {
+            this.getOwnerComponent().getRouter().navTo("third");
+        },
+
+        // Menü-Auswahl wie in Page 1
+        onMenuSelect: function (oEvent) {
+            const selected = oEvent.getParameter("listItem").getTitle();
+
+            switch (selected) {
+                case "Dashboard":
+                    this.getOwnerComponent().getRouter().navTo("main");
+                    break;
+
+                case "Transaktionen":
+                    this.getOwnerComponent().getRouter().navTo("second");
+                    break;
+
+                case "Berichte":
+                    this.getOwnerComponent().getRouter().navTo("third");
+                    break;
+            }
         },
 
         // =========================

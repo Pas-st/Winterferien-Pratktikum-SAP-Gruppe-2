@@ -3,56 +3,74 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
 
-    <Page title="Second View">
-        <content>
+    
 
-            <Button
-                text="Eintrag hinzufügen"
-                press="onAddEntry"
-                type="Emphasized"
-                class="sapUiSmallMarginBottom"/>
 
-            <Table
-                id="entryTable"
-                items="{/entries}">
+    <SplitContainer id="secondSplit">
 
-                <columns>
-                    <Column><Text text="Datum"/></Column>
-                    <Column><Text text="Betrag (€)"/></Column>
-                    <Column><Text text="Einnahme/Ausgabe"/></Column>
-                    <Column><Text text="Beschreibung"/></Column>
-                    <Column width="5rem"/>
-                </columns>
+        <!-- LINKES MENÜ -->
+        <masterPages>
+            <Page title="Finanzübersicht">
+                <List mode="SingleSelectMaster" select="onMenuSelect">
+                    <StandardListItem title="Dashboard" type="Active" />
+                    <StandardListItem title="Transaktionen" type="Active" />
+                    <StandardListItem title="Berichte" type="Active" />
+                </List>
+            </Page>
+        </masterPages>
+        <detailPages>
+           <Page title="Second View">
+                <content>
 
-                <items>
-                    <ColumnListItem>
-                        <cells>
-                            <Text text="{date}"/>
-                            <Text text="{amount}"/>
-                            <Text text="{type}"/>
-                            <Text text="{description}"/>
+                    <Button
+                        text="Eintrag hinzufügen"
+                        press="onAddEntry"
+                        type="Emphasized"
+                        class="sapUiSmallMarginBottom"/>
 
-                            <HBox>
-                                <Button
-                                    icon="sap-icon://decline"
-                                    type="Transparent"
-                                    press="onDeleteEntry"/>
-                                <Button
-                                    icon="sap-icon://edit"
-                                    type="Transparent"
-                                    press="onEditEntry"/>
-                            </HBox>
-                        </cells>
-                    </ColumnListItem>
-                </items>
+                    <Table
+                        id="entryTable"
+                        items="{/entries}">
 
-            </Table>
+                        <columns>
+                            <Column><Text text="Datum"/></Column>
+                            <Column><Text text="Betrag (€)"/></Column>
+                            <Column><Text text="Einnahme/Ausgabe"/></Column>
+                            <Column><Text text="Beschreibung"/></Column>
+                            <Column width="5rem"/>
+                        </columns>
 
-            <Button
-                text="Zurück"
-                press="onBack"
-                class="sapUiSmallMarginTop"/>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{date}"/>
+                                    <Text text="{amount}"/>
+                                    <Text text="{type}"/>
+                                    <Text text="{description}"/>
 
-        </content>
-    </Page>
+                                    <HBox>
+                                        <Button
+                                            icon="sap-icon://decline"
+                                            type="Transparent"
+                                            press="onDeleteEntry"/>
+                                        <Button
+                                            icon="sap-icon://edit"
+                                            type="Transparent"
+                                            press="onEditEntry"/>
+                                    </HBox>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                    <Button
+                        text="Zurück"
+                        press="onBack"
+                        class="sapUiSmallMarginTop"/>
+
+                </content>
+            </Page>
+        </detailPages>
+    </SplitContainer>
 </mvc:View>

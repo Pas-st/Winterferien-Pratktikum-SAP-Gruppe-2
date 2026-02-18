@@ -6,18 +6,18 @@
   },
   "sap.ui5": {
     "rootView": {
-  "viewName": "my.app.view.App",
-  "type": "XML",
-  "async": true,
-  "id": "app"
-},
+      "viewName": "my.app.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
 
     "dependencies": {
       "libs": {
         "sap.m": {}
       }
     },
-    
+
     "routing": {
       "config": {
         "routerClass": "sap.m.routing.Router",
