@@ -1,13 +1,14 @@
 <mvc:View
-    controllerName="my.app.controller.Second"
+    controllerName="my.app.controller.Third"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true"> <!-- WICHTIG: Erlaubt der View, die volle Höhe einzunehmen -->
 
-     <SplitContainer id="thirdSplit">
-
-        <!-- LINKES MENÜ -->
+    <SplitContainer id="thirdSplit">
         <masterPages>
             <Page title="Finanzübersicht">
+                <!-- Hinweis: sap.m.ListMode.SingleSelect ist veraltet, nutzen Sie SingleSelectMaster -->
                 <List mode="SingleSelectMaster" select="onMenuSelect">
                     <StandardListItem title="Dashboard" type="Active" />
                     <StandardListItem title="Transaktionen" type="Active" />
@@ -15,15 +16,33 @@
                 </List>
             </Page>
         </masterPages>
+
         <detailPages>
-            <Page title="Third View">
+            <Page title="Berichte">
                 <content>
-                    <Text text="Dies ist die Second View"/>
-                    <Button text="Zurück" press="onBack"/>
+                    <!-- HBox als Container für die Diagramme -->
+                    <HBox width="100%" justifyContent="Center" class="sapUiSmallMarginTop">
+                        <items>
+                            <!-- Erster Chart-Container -->
+                            <VBox width="50%" height="500px" class="sapUiSmallMarginEnd">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" /> 
+                                </layoutData>
+                                <!-- core:HTML benötigt oft einen Inhalts-String mit 100% Größe -->
+                                <core:HTML id="chartContainer1" content='&lt;div style="height:100%; width:100%;"&gt;&lt;/div&gt;' />
+                            </VBox>
+
+                            <!-- Zweiter Chart-Container -->
+                            <VBox width="50%" height="500px">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                                <core:HTML id="chartContainer2" content='&lt;div style="height:100%; width:100%;"&gt;&lt;/div&gt;' />
+                            </VBox>
+                        </items>
+                    </HBox>
                 </content>
             </Page>
         </detailPages>
     </SplitContainer>
-
-    
 </mvc:View>
