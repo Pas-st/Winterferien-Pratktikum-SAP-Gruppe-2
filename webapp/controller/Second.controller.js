@@ -25,6 +25,13 @@ sap.ui.define([
 
     return Controller.extend("my.app.controller.Second", {
 
+        onInit: function () {
+            const oModel = new JSONModel({
+                entries: []
+            });
+            this.getView().setModel(oModel);
+        },
+
         onGoSecond: function () {
             this.getOwnerComponent().getRouter().navTo("second");
         },
@@ -111,9 +118,6 @@ sap.ui.define([
                     } else {
                         aEntries.push(oData);
                     }
-
-                    // 🔽 SORTIERUNG NACH DATUM
-                    this._sortEntriesByDate(aEntries);
 
                     oModel.setProperty("/entries", aEntries);
                     oDialog.close();

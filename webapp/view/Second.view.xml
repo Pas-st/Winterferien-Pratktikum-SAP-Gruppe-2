@@ -64,10 +64,6 @@
 
                     </Table>
 
-                    <Button
-                        text="Zurück"
-                        press="onBack"
-                        class="sapUiSmallMarginTop"/>
 
                 </content>
             </Page>
