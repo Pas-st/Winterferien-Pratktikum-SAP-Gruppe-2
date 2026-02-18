@@ -1,12 +1,29 @@
 <mvc:View
-    controllerName="my.app.controller.Third"
+    controllerName="my.app.controller.Second"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
 
-    <Page title="Third View">
-        <content>
-            <Text text="Dies ist die Third View"/>
-            <Button text="Zurück" press="onBack"/>
-        </content>
-    </Page>
+     <SplitContainer id="thirdSplit">
+
+        <!-- LINKES MENÜ -->
+        <masterPages>
+            <Page title="Finanzübersicht">
+                <List mode="SingleSelectMaster" select="onMenuSelect">
+                    <StandardListItem title="Dashboard" type="Active" />
+                    <StandardListItem title="Transaktionen" type="Active" />
+                    <StandardListItem title="Berichte" type="Active" />
+                </List>
+            </Page>
+        </masterPages>
+        <detailPages>
+            <Page title="Third View">
+                <content>
+                    <Text text="Dies ist die Second View"/>
+                    <Button text="Zurück" press="onBack"/>
+                </content>
+            </Page>
+        </detailPages>
+    </SplitContainer>
+
+    
 </mvc:View>
