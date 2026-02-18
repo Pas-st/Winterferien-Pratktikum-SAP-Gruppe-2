@@ -5,8 +5,55 @@
 
     <Page title="Second View">
         <content>
-            <Text text="Dies ist die Second View"/>
-            <Button text="Zurück" press="onBack"/>
+
+            <Button
+                text="Eintrag hinzufügen"
+                press="onAddEntry"
+                type="Emphasized"
+                class="sapUiSmallMarginBottom"/>
+
+            <Table
+                id="entryTable"
+                items="{/entries}">
+
+                <columns>
+                    <Column><Text text="Datum"/></Column>
+                    <Column><Text text="Betrag"/></Column>
+                    <Column><Text text="Einnahme/Ausgabe"/></Column>
+                    <Column><Text text="Beschreibung"/></Column>
+                    <Column width="5rem"/>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{date}"/>
+                            <Text text="{amount}"/>
+                            <Text text="{type}"/>
+                            <Text text="{description}"/>
+
+                            <HBox>
+                                <Button
+                                    icon="sap-icon://decline"
+                                    type="Transparent"
+                                    press="onDeleteEntry"/>
+                                <Button
+                                    icon="sap-icon://edit"
+                                    type="Transparent"
+                                    press="onEditEntry"/>
+                            </HBox>
+
+                        </cells>
+                    </ColumnListItem>
+                </items>
+
+            </Table>
+
+            <Button
+                text="Zurück"
+                press="onBack"
+                class="sapUiSmallMarginTop"/>
+
         </content>
     </Page>
 </mvc:View>
