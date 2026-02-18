@@ -26,9 +26,8 @@ sap.ui.define([
     return Controller.extend("my.app.controller.Second", {
 
         onInit: function () {
-            const oModel = new JSONModel({
-                entries: []
-            });
+            const oModel = new JSONModel({});
+            oModel.loadData("model/entries.json");
             this.getView().setModel(oModel);
         },
 
