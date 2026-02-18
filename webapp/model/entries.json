@@ -1,0 +1,22 @@
+{
+    "entries": [
+        {
+            "date": "2026-01-15",
+            "amount": "1200",
+            "type": "Einnahme",
+            "description": "Gehalt Januar"
+        },
+        {
+            "date": "2026-01-20",
+            "amount": "850",
+            "type": "Ausgabe",
+            "description": "Miete"
+        },
+        {
+            "date": "2026-02-01",
+            "amount": "200",
+            "type": "Ausgabe",
+            "description": "Lebensmittel"
+        }
+    ]
+}
