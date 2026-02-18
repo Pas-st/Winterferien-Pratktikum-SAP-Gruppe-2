@@ -1,18 +1,29 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], function (Controller) {
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel"
+], function (Controller, JSONModel) {
     "use strict";
 
     return Controller.extend("my.app.controller.Third", {
 
         onInit: function () {
-            this._loadChartJs().then(() => {
-                this._injectCanvas();
 
-                setTimeout(() => {
-                    this._drawPieChart("myPieChart1", this._getChart1Data());
-                    this._drawPieChart("myPieChart2", this._getChart2Data());
-                }, 0);
+            // JSON laden
+            const oModel = new JSONModel();
+            oModel.loadData("model/entries.json");
+
+            // Wenn JSON geladen ist → Charts aufbauen
+            oModel.attachRequestCompleted(() => {
+                this._entries = oModel.getData().entries;
+
+                this._loadChartJs().then(() => {
+                    this._injectCanvas();
+
+                    setTimeout(() => {
+                        this._drawPieChart("myPieChart1", this._getChart1Data());
+                        this._drawPieChart("myPieChart2", this._getChart2Data());
+                    }, 0);
+                });
             });
         },
 
@@ -38,36 +49,55 @@ sap.ui.define([
         // -----------------------------
         _injectCanvas: function () {
             this.byId("chartContainer1")
-                .setContent("<canvas id='myPieChart1' style='width:100%; height:250%;'></canvas>");
+                .setContent("<canvas id='myPieChart1' style='width:100%; height:350%;'></canvas>");
 
             this.byId("chartContainer2")
-                .setContent("<canvas id='myPieChart2' style='width:100%; height:250%;'></canvas>");
+                .setContent("<canvas id='myPieChart2' style='width:100%; height:350%;'></canvas>");
         },
 
         // -----------------------------
-        // Chart 1 Daten (mit Titel)
+        // Prozentwerte berechnen
+        // -----------------------------
+        _calculatePercentages: function (type) {
+
+            const filtered = this._entries.filter(e => e.type === type);
+
+            const total = filtered.reduce((sum, e) => sum + Number(e.amount), 0);
+
+            return filtered.map(e => ({
+                label: e.description,
+                value: Math.round((Number(e.amount) / total) * 100)
+            }));
+        },
+
+        // -----------------------------
+        // Chart 1 Daten (Ausgaben)
         // -----------------------------
         _getChart1Data: function () {
+            const data = this._calculatePercentages("Ausgabe");
+
             return {
                 title: "Ausgaben",
-                labels: ["Personalkosten", "Material", "Miete", "Marketing", "Sonstiges"],
-                values: [40, 30, 15, 10, 5]
+                labels: data.map(d => d.label),
+                values: data.map(d => d.value)
             };
         },
 
         // -----------------------------
-        // Chart 2 Daten (mit Titel)
+        // Chart 2 Daten (Einnahmen)
         // -----------------------------
         _getChart2Data: function () {
+            const data = this._calculatePercentages("Einnahme");
+
             return {
                 title: "Einnahmen",
-                labels: ["Produktverkäufe", "Service", "Wartung", "Lizenzen", "Sonstiges"],
-                values: [45, 25, 15, 10, 5]
+                labels: data.map(d => d.label),
+                values: data.map(d => d.value)
             };
         },
 
         // -----------------------------
-        // Chart zeichnen (mit Titel)
+        // Chart zeichnen
         // -----------------------------
         _drawPieChart: function (canvasId, chartData) {
             const canvas = document.getElementById(canvasId);
@@ -93,7 +123,6 @@ sap.ui.define([
                     maintainAspectRatio: false,
 
                     plugins: {
-                        // TITEL HIER
                         title: {
                             display: true,
                             text: chartData.title,
@@ -102,7 +131,7 @@ sap.ui.define([
                                 weight: "bold"
                             },
                             padding: {
-                                top: 10,
+                                top: 150,
                                 bottom: 20
                             }
                         },
@@ -111,9 +140,7 @@ sap.ui.define([
                             position: "bottom",
                             labels: {
                                 boxWidth: 12,
-                                font: {
-                                    size: 15
-                                }
+                                font: { size: 15 }
                             }
                         }
                     }
@@ -122,7 +149,7 @@ sap.ui.define([
         },
 
         // -----------------------------
-        // DEINE ORIGINALEN FUNKTIONEN
+        // Navigation
         // -----------------------------
         onGoSecond: function () {
             this.getOwnerComponent().getRouter().navTo("second");

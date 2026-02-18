@@ -2,13 +2,12 @@
     controllerName="my.app.controller.Third"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    displayBlock="true"> <!-- WICHTIG: Erlaubt der View, die volle Höhe einzunehmen -->
+    xmlns:core="sap.ui.core">
 
     <SplitContainer id="thirdSplit">
+
         <masterPages>
             <Page title="Finanzübersicht">
-                <!-- Hinweis: sap.m.ListMode.SingleSelect ist veraltet, nutzen Sie SingleSelectMaster -->
                 <List mode="SingleSelectMaster" select="onMenuSelect">
                     <StandardListItem title="Dashboard" type="Active" />
                     <StandardListItem title="Transaktionen" type="Active" />
@@ -20,29 +19,20 @@
         <detailPages>
             <Page title="Berichte">
                 <content>
-                    <!-- HBox als Container für die Diagramme -->
-                    <HBox width="100%" justifyContent="Center" class="sapUiSmallMarginTop">
-                        <items>
-                            <!-- Erster Chart-Container -->
-                            <VBox width="50%" height="500px" class="sapUiSmallMarginEnd">
-                                <layoutData>
-                                    <FlexItemData growFactor="1" /> 
-                                </layoutData>
-                                <!-- core:HTML benötigt oft einen Inhalts-String mit 100% Größe -->
-                                <core:HTML id="chartContainer1" content='&lt;div style="height:100%; width:100%;"&gt;&lt;/div&gt;' />
-                            </VBox>
 
-                            <!-- Zweiter Chart-Container -->
-                            <VBox width="50%" height="500px">
-                                <layoutData>
-                                    <FlexItemData growFactor="1" />
-                                </layoutData>
-                                <core:HTML id="chartContainer2" content='&lt;div style="height:100%; width:100%;"&gt;&lt;/div&gt;' />
-                            </VBox>
-                        </items>
+                    <HBox width="100%" justifyContent="Center">
+                        <VBox width="50%" height="400px">
+                            <core:HTML id="chartContainer1" />
+                        </VBox>
+                        <VBox width="50%" height="400px">
+                            <core:HTML id="chartContainer2" />
+                        </VBox>
                     </HBox>
+
                 </content>
             </Page>
         </detailPages>
+
     </SplitContainer>
+
 </mvc:View>
