@@ -1,0 +1,60 @@
+{
+  "sap.app": {
+    "id": "my.app",
+    "type": "application",
+    "title": "OpenUI5 Demo"
+  },
+  "sap.ui5": {
+    "rootView": {
+  "viewName": "my.app.view.App",
+  "type": "XML",
+  "async": true,
+  "id": "app"
+},
+
+    "dependencies": {
+      "libs": {
+        "sap.m": {}
+      }
+    },
+    
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "my.app.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "main",
+          "target": "main"
+        },
+        {
+          "pattern": "second",
+          "name": "second",
+          "target": "second"
+        },
+        {
+          "pattern": "third",
+          "name": "third",
+          "target": "third"
+        }
+      ],
+      "targets": {
+        "main": {
+          "viewName": "Main"
+        },
+        "second": {
+          "viewName": "Second"
+        },
+        "third": {
+          "viewName": "Third"
+        }
+      }
+    }
+  }
+}

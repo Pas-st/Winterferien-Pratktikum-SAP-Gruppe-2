@@ -1,0 +1,12 @@
+<mvc:View
+    controllerName="my.app.controller.Third"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page title="Third View">
+        <content>
+            <Text text="Dies ist die Third View"/>
+            <Button text="Zurück" press="onBack"/>
+        </content>
+    </Page>
+</mvc:View>

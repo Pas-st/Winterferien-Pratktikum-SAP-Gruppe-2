@@ -1,0 +1,12 @@
+<mvc:View
+    controllerName="my.app.controller.Second"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <Page title="Second View">
+        <content>
+            <Text text="Dies ist die Second View"/>
+            <Button text="Zurück" press="onBack"/>
+        </content>
+    </Page>
+</mvc:View>
