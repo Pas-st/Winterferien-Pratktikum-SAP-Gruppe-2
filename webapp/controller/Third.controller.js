@@ -8,13 +8,30 @@ sap.ui.define([
 
         onInit: function () {
 
+            // CSS für Summenbox hinzufügen
+            this._addSummaryBoxStyles();
+
             // JSON laden
             const oModel = new JSONModel();
             oModel.loadData("model/entries.json");
 
-            // Wenn JSON geladen ist → Charts aufbauen
+            // Wenn JSON geladen ist → Charts + Summen aufbauen
             oModel.attachRequestCompleted(() => {
                 this._entries = oModel.getData().entries;
+
+                // Summen berechnen und anzeigen
+                const totalAusgaben = this._getTotal("Ausgabe");
+                const totalEinnahmen = this._getTotal("Einnahme");
+
+                const txtAus = this.byId("txtTotalAusgaben");
+                const txtEin = this.byId("txtTotalEinnahmen");
+
+                txtAus.setText("Ausgaben: " + totalAusgaben + " €");
+                txtEin.setText("Einnahmen: " + totalEinnahmen + " €");
+
+                // Box-Styling anwenden
+                txtAus.addStyleClass("summaryOuterBox");
+                txtEin.addStyleClass("summaryOuterBox");
 
                 this._loadChartJs().then(() => {
                     this._injectCanvas();
@@ -25,6 +42,28 @@ sap.ui.define([
                     }, 0);
                 });
             });
+        },
+
+        // -----------------------------
+        // CSS für Summenbox
+        // -----------------------------
+        _addSummaryBoxStyles: function () {
+            const style = document.createElement("style");
+            style.innerHTML = `
+                .summaryOuterBox {
+                    background: #f7f7f7;
+                    border-radius: 14px;
+                    padding: 15px 20px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+                    text-align: center;
+                    font-size: 18px;
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 100%;
+                }
+            `;
+            document.head.appendChild(style);
         },
 
         // -----------------------------
@@ -56,17 +95,39 @@ sap.ui.define([
         },
 
         // -----------------------------
-        // Prozentwerte berechnen
+        // ABSOLUTWERTE berechnen
+        // -----------------------------
+        _getTotal: function (type) {
+            return this._entries
+                .filter(e => e.type === type)
+                .reduce((sum, e) => sum + Number(e.amount), 0);
+        },
+
+        // -----------------------------
+        // Prozentwerte berechnen + gleiche Beschreibungen kombinieren
         // -----------------------------
         _calculatePercentages: function (type) {
 
             const filtered = this._entries.filter(e => e.type === type);
 
-            const total = filtered.reduce((sum, e) => sum + Number(e.amount), 0);
+            const combined = {};
 
-            return filtered.map(e => ({
-                label: e.description,
-                value: Math.round((Number(e.amount) / total) * 100)
+            filtered.forEach(e => {
+                const desc = e.description;
+                const amount = Number(e.amount);
+
+                if (!combined[desc]) {
+                    combined[desc] = 0;
+                }
+
+                combined[desc] += amount;
+            });
+
+            const total = Object.values(combined).reduce((sum, v) => sum + v, 0);
+
+            return Object.keys(combined).map(desc => ({
+                label: desc,
+                value: Math.round((combined[desc] / total) * 100)
             }));
         },
 
@@ -131,7 +192,7 @@ sap.ui.define([
                                 weight: "bold"
                             },
                             padding: {
-                                top: 150,
+                                top: 50,
                                 bottom: 20
                             }
                         },

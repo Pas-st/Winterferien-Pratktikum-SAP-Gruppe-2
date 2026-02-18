@@ -20,6 +20,22 @@
             <Page title="Berichte">
                 <content>
 
+                    <!-- ⭐ SCHICKE BOX UM DIE SUMMEN ⭐ -->
+                    <VBox width="90%" class="summaryOuterBox" alignItems="Center">
+                        <HBox width="100%" justifyContent="SpaceAround">
+
+                            <VBox width="45%" alignItems="Center">
+                                <Text id="txtTotalAusgaben" text="Ausgaben: 0 €" design="Bold" />
+                            </VBox>
+
+                            <VBox width="45%" alignItems="Center">
+                                <Text id="txtTotalEinnahmen" text="Einnahmen: 0 €" design="Bold" />
+                            </VBox>
+
+                        </HBox>
+                    </VBox>
+
+                    <!-- DEINE CHARTS -->
                     <HBox width="100%" justifyContent="Center">
                         <VBox width="50%" height="400px">
                             <core:HTML id="chartContainer1" />
