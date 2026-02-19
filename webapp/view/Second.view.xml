@@ -39,6 +39,10 @@
                 
                 <!-- FILTER OBEN RECHTS -->
                 <headerContent>
+                    <Select id="sortSelect" change="onSortChange" width="12rem">
+                        <core:Item key="UP" text="Datum Aufsteigend"/>
+                        <core:Item key="DOWN" text="Datum Absteigend"/>
+                    </Select>
                     <Select
                         id="typeFilter"
                         width="10rem"

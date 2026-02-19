@@ -9,8 +9,6 @@ sap.ui.define([
     "sap/m/Label",
     "sap/ui/layout/VerticalLayout",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
     "sap/ui/core/format/DateFormat"
 ], function (
     Controller,
@@ -23,8 +21,6 @@ sap.ui.define([
     Label,
     VerticalLayout,
     JSONModel,
-    Filter,
-    FilterOperator,
     DateFormat
 ) {
     "use strict";
@@ -40,22 +36,31 @@ sap.ui.define([
         },
 
         // =========================
-        // Datum sortieren (Header Click)
+        // Datum Sortierung über Spalten-Click
         // =========================
         onSortDate: function () {
             this._bDateDescending = !this._bDateDescending;
-            this._animateSortEntries();
+            this._applySortAndFilter();
+        },
+
+        // =========================
+        // Datum Sortierung über Select Dropdown
+        // =========================
+        onSortChange: function (oEvent) {
+            const sKey = oEvent.getParameter("selectedItem").getKey();
+            this._bDateDescending = (sKey === "DOWN");
+            this._applySortAndFilter();
         },
 
         // =========================
         // Filter ändern
         // =========================
         onFilterChange: function () {
-            this._animateSortEntries();
+            this._applySortAndFilter();
         },
 
         // =========================
-        // Menü Auswahl
+        // Menü Auswahl links
         // =========================
         onMenuSelect: function (oEvent) {
             const selected = oEvent.getParameter("listItem").getTitle();
@@ -105,7 +110,7 @@ sap.ui.define([
                 type: "Emphasized",
                 press: () => {
                     const oModel = oView.getModel();
-                    const aEntries = oModel.getProperty("/entries");
+                    const aEntries = oModel.getProperty("/entries") || [];
 
                     const oDateObj = oDatePicker.getDateValue();
                     const oDateFormat = DateFormat.getDateInstance({ pattern: "dd.MM.yy" });
@@ -122,10 +127,7 @@ sap.ui.define([
                     else aEntries.push(oData);
 
                     oModel.setProperty("/entries", aEntries);
-
-                    // Tabelle animiert sortieren + Filter anwenden
-                    this._animateSortEntries();
-
+                    this._applySortAndFilter();
                     oDialog.close();
                 }
             });
@@ -151,22 +153,6 @@ sap.ui.define([
             oDialog.open();
         },
 
-        // =========================
-        // Delete Handler
-        // =========================
-        onDeleteEntry: function (oEvent) {
-            const oItem = oEvent.getSource().getParent().getParent();
-            const oTable = this.byId("entryTable");
-            const iIndex = oTable.indexOfItem(oItem);
-
-            const oModel = this.getView().getModel();
-            const aEntries = oModel.getProperty("/entries");
-            aEntries.splice(iIndex, 1);
-            oModel.setProperty("/entries", aEntries);
-
-            this._animateSortEntries();
-        },
-
         onAddEntry: function () { this._openEntryDialog(); },
         onEditEntry: function (oEvent) {
             const oItem = oEvent.getSource().getParent().getParent();
@@ -176,48 +162,41 @@ sap.ui.define([
             this._openEntryDialog(oEntry, iIndex);
         },
 
-        // =========================
-        // Animierte Sortierung + Filter
-        // =========================
-        _animateSortEntries: function (iStepDelay = 1) {
-            const oModel = this.getView().getModel();
-            let aEntries = [...oModel.getProperty("/entries")];
+        onDeleteEntry: function (oEvent) {
+            const oItem = oEvent.getSource().getParent().getParent();
+            const oTable = this.byId("entryTable");
+            const iIndex = oTable.indexOfItem(oItem);
 
-            // 1️⃣ Filter anwenden
+            const oModel = this.getView().getModel();
+            const aEntries = oModel.getProperty("/entries") || [];
+            aEntries.splice(iIndex, 1);
+            oModel.setProperty("/entries", aEntries);
+            this._applySortAndFilter();
+        },
+
+        // =========================
+        // Filter + Sortierung anwenden
+        // =========================
+        _applySortAndFilter: function () {
+            const oModel = this.getView().getModel();
+            let aEntries = oModel.getProperty("/entries") || [];
+
+            // Filter nach Typ
             const oSelect = this.byId("typeFilter");
-            let sKey = "ALL";
-            if (oSelect) sKey = oSelect.getSelectedKey();
+            const sKey = oSelect ? oSelect.getSelectedKey() : "ALL";
             if (sKey === "IN") aEntries = aEntries.filter(e => e.type === "Einnahme");
             else if (sKey === "OUT") aEntries = aEntries.filter(e => e.type === "Ausgabe");
 
-            // 2️⃣ Sortieren animiert
-            let aSorted = [];
-            let i = 0;
-            const step = () => {
-                if (i >= aEntries.length) return;
+            // Sortieren nach Datum
+            aEntries.sort((a, b) => {
+                const dA = this._parseDate(a.date);
+                const dB = this._parseDate(b.date);
+                return this._bDateDescending ? dB - dA : dA - dB;
+            });
 
-                const current = aEntries[i];
-                let inserted = false;
-                for (let j = 0; j < aSorted.length; j++) {
-                    const dateCurrent = this._parseDate(current.date);
-                    const dateSorted = this._parseDate(aSorted[j].date);
-                    if ((this._bDateDescending && dateCurrent > dateSorted) ||
-                        (!this._bDateDescending && dateCurrent < dateSorted)) {
-                        aSorted.splice(j, 0, current);
-                        inserted = true;
-                        break;
-                    }
-                }
-                if (!inserted) aSorted.push(current);
+            oModel.setProperty("/entries", aEntries);
 
-                oModel.setProperty("/entries", [...aSorted, ...aEntries.slice(i+1)]);
-
-                i++;
-                setTimeout(step, iStepDelay);
-            };
-            step();
-
-            // 3️⃣ Caret setzen
+            // SortIndicator für Datum-Column setzen
             const oColumn = this.byId("dateColumn");
             if (oColumn) oColumn.setSortIndicator(this._bDateDescending ? "Descending" : "Ascending");
         },
