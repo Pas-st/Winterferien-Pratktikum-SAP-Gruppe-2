@@ -50,6 +50,7 @@
                             <core:Item key="OUT" text="Ausgaben"/>
                         </items>
                     </Select>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />
                 </headerContent>
 
                 <content>
