@@ -27,13 +27,13 @@
                             <!-- AUSGABEN -->
                             <VBox width="45%" alignItems="Center">
                                 <Text id="txtTotalAusgaben" text="Ausgaben: 0 €" class="sapUiSmallMarginBottom sapUiBold" />
-                                <Text id="txtWeeklyAusgaben" text="∅ Wöchentliche Ausgaben: 0 €" />
+                                <Text id="txtWeeklyAusgaben" text="Wöchentliche Ausgaben: 0 €" />
                             </VBox>
 
                             <!-- EINNAHMEN -->
                             <VBox width="45%" alignItems="Center">
                                 <Text id="txtTotalEinnahmen" text="Einnahmen: 0 €" class="sapUiSmallMarginBottom sapUiBold" />
-                                <Text id="txtWeeklyEinnahmen" text="∅ Wöchentliche Einnahmen: 0 €" />
+                                <Text id="txtWeeklyEinnahmen" text="Wöchentliche Einnahmen: 0 €" />
                             </VBox>
 
                         </HBox>
