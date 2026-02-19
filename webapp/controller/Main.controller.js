@@ -82,7 +82,7 @@ sap.ui.define([
                     background:#fff;
                     border-radius:12px;
                     box-shadow:0 6px 16px rgba(0,0,0,0.06);
-                    padding:16px;
+                    padding:20px;
                     /* verhindert, dass äußere Abstände Scrollen erzwingen */
                     box-sizing: border-box;
                 }
