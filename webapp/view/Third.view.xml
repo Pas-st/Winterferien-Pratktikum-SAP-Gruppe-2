@@ -8,7 +8,7 @@
 
         <!-- LINKES MENÜ -->
         <masterPages>
-            <Page title="Finanzübersicht">
+            <Page title="Aureus">
                 <List 
                     mode="SingleSelectMaster" 
                     selectionChange="onMenuSelect">
