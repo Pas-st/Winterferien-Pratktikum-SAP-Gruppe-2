@@ -35,7 +35,7 @@
         </masterPages>
 
         <detailPages>
-            <Page title="Finanzübersicht" showHeader="true">
+            <Page title="Transaktionen" showHeader="true">
                 
                 <!-- FILTER OBEN RECHTS -->
                 <headerContent>
