@@ -33,35 +33,33 @@ sap.ui.define([
             this.getView().setModel(oModel);
 
             this._bDateDescending = false; // initial aufsteigend
+
+            // Originaldaten zwischenspeichern, nachdem sie geladen sind
+            oModel.attachRequestCompleted(() => {
+                this._aAllEntries = [...oModel.getProperty("/entries")];
+                this._applySortAndFilter();
+            });
         },
 
-        // =========================
-        // Datum Sortierung über Spalten-Click
-        // =========================
+        // Sortierung per Spaltenclick
         onSortDate: function () {
             this._bDateDescending = !this._bDateDescending;
             this._applySortAndFilter();
         },
 
-        // =========================
-        // Datum Sortierung über Select Dropdown
-        // =========================
+        // Sortierung per Dropdown
         onSortChange: function (oEvent) {
             const sKey = oEvent.getParameter("selectedItem").getKey();
             this._bDateDescending = (sKey === "DOWN");
             this._applySortAndFilter();
         },
 
-        // =========================
         // Filter ändern
-        // =========================
         onFilterChange: function () {
             this._applySortAndFilter();
         },
 
-        // =========================
         // Menü Auswahl links
-        // =========================
         onMenuSelect: function (oEvent) {
             const selected = oEvent.getParameter("listItem").getTitle();
             switch (selected) {
@@ -71,9 +69,7 @@ sap.ui.define([
             }
         },
 
-        // =========================
-        // Add / Edit Dialog
-        // =========================
+        // Dialog für Add/Edit
         _openEntryDialog: function (oContext, iIndex) {
             const oView = this.getView();
             const bEdit = !!oContext;
@@ -110,8 +106,6 @@ sap.ui.define([
                 type: "Emphasized",
                 press: () => {
                     const oModel = oView.getModel();
-                    const aEntries = oModel.getProperty("/entries") || [];
-
                     const oDateObj = oDatePicker.getDateValue();
                     const oDateFormat = DateFormat.getDateInstance({ pattern: "dd.MM.yy" });
                     const sFormattedDate = oDateObj ? oDateFormat.format(oDateObj) : "";
@@ -123,10 +117,10 @@ sap.ui.define([
                         description: oDescriptionInput.getValue()
                     };
 
-                    if (bEdit) aEntries[iIndex] = oData;
-                    else aEntries.push(oData);
+                    // Original-Liste aktualisieren
+                    if (bEdit) this._aAllEntries[iIndex] = oData;
+                    else this._aAllEntries.push(oData);
 
-                    oModel.setProperty("/entries", aEntries);
                     this._applySortAndFilter();
                     oDialog.close();
                 }
@@ -158,7 +152,7 @@ sap.ui.define([
             const oItem = oEvent.getSource().getParent().getParent();
             const oTable = this.byId("entryTable");
             const iIndex = oTable.indexOfItem(oItem);
-            const oEntry = this.getView().getModel().getProperty("/entries")[iIndex];
+            const oEntry = this._aAllEntries[iIndex];
             this._openEntryDialog(oEntry, iIndex);
         },
 
@@ -167,19 +161,14 @@ sap.ui.define([
             const oTable = this.byId("entryTable");
             const iIndex = oTable.indexOfItem(oItem);
 
-            const oModel = this.getView().getModel();
-            const aEntries = oModel.getProperty("/entries") || [];
-            aEntries.splice(iIndex, 1);
-            oModel.setProperty("/entries", aEntries);
+            this._aAllEntries.splice(iIndex, 1);
             this._applySortAndFilter();
         },
 
-        // =========================
-        // Filter + Sortierung anwenden
-        // =========================
+        // Filter + Sortierung anwenden (nur Anzeige)
         _applySortAndFilter: function () {
             const oModel = this.getView().getModel();
-            let aEntries = oModel.getProperty("/entries") || [];
+            let aEntries = [...this._aAllEntries]; // alle Originaldaten
 
             // Filter nach Typ
             const oSelect = this.byId("typeFilter");
@@ -194,9 +183,10 @@ sap.ui.define([
                 return this._bDateDescending ? dB - dA : dA - dB;
             });
 
+            // Anzeige aktualisieren
             oModel.setProperty("/entries", aEntries);
 
-            // SortIndicator für Datum-Column setzen
+            // SortIndicator setzen
             const oColumn = this.byId("dateColumn");
             if (oColumn) oColumn.setSortIndicator(this._bDateDescending ? "Descending" : "Ascending");
         },
