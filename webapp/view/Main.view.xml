@@ -1,7 +1,8 @@
 <mvc:View
     controllerName="my.app.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
 
     <SplitContainer id="mainSplit">
 
@@ -38,17 +39,39 @@
 
         <!-- RECHTER INHALT -->
         <detailPages>
-            <Page title="Main View" showHeader="true">
+            <!-- Wichtig: kein Scrollen; Hintergrund transparent; Klasse für CSS-Zielsetzung -->
+            <Page
+                id="chartPage"
+                title="Dashboard"
+                enableScrolling="false"
+                backgroundDesign="Transparent"
+                class="sapUiResponsiveContentPadding noUnderlay noScroll">
+
                 <headerContent>
-                    <Image src="images/SAP_Logo.svg" alt="Logo" />
+                    <Select
+                        id="viewSelect"
+                        change="onViewChange"
+                        selectedKey="quarterly">
+                        <core:Item key="quarterly" text="Quartalsansicht" />
+                        <core:Item key="yearly" text="Jahresansicht" />
+                        <core:Item key="total" text="Gesamtansicht" />
+                    </Select>
                 </headerContent>
+
                 <content>
-                    <Button text="Zur Second View" press="onGoSecond"/>
-                    <Button text="Zur Third View" press="onGoThird"/>
+                    <!-- Eine einzige Card mit KPI-Zeile + Chart + Legende -->
+                    <Panel
+                        id="chartPanel"
+                        width="100%"
+                        backgroundDesign="Transparent"
+                        class="chartCard sapUiMediumMargin">
+
+                        <!-- KPI- und Canvas-HTML wird via JS gesetzt -->
+                        <core:HTML id="chartContainer" sanitizeContent="false" />
+                    </Panel>
                 </content>
             </Page>
         </detailPages>
 
     </SplitContainer>
-
 </mvc:View>
