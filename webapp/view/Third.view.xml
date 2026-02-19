@@ -45,6 +45,26 @@
 
                 <content>
 
+                    <!-- ⭐ SUMMENBOX ⭐ -->
+                    <VBox width="90%" class="summaryOuterBox" alignItems="Center">
+                        <HBox width="100%" justifyContent="SpaceAround">
+
+                            <!-- AUSGABEN -->
+                            <VBox width="45%" alignItems="Center">
+                                <Text id="txtTotalAusgaben" text="Ausgaben: 0 €" class="sapUiSmallMarginBottom sapUiBold" />
+                                <Text id="txtWeeklyAusgaben" text="Wöchentliche Ausgaben: 0 €" />
+                            </VBox>
+
+                            <!-- EINNAHMEN -->
+                            <VBox width="45%" alignItems="Center">
+                                <Text id="txtTotalEinnahmen" text="Einnahmen: 0 €" class="sapUiSmallMarginBottom sapUiBold" />
+                                <Text id="txtWeeklyEinnahmen" text="Wöchentliche Einnahmen: 0 €" />
+                            </VBox>
+
+                        </HBox>
+                    </VBox>
+
+                    <!-- ⭐ PIE CHARTS ⭐ -->
                     <HBox width="100%" justifyContent="Center">
                         <VBox width="50%" height="400px">
                             <core:HTML id="chartContainer1" />
@@ -53,6 +73,11 @@
                             <core:HTML id="chartContainer2" />
                         </VBox>
                     </HBox>
+
+                    <!-- ⭐ LINE CHART (Zeit-Geld) ⭐ -->
+                    <VBox width="100%" height="400px" class="paddingBetweenCharts">
+                        <core:HTML id="lineChartContainer" />
+                    </VBox>
 
                 </content>
             </Page>
