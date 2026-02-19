@@ -56,6 +56,7 @@
                         <core:Item key="yearly" text="Jahresansicht" />
                         <core:Item key="total" text="Gesamtansicht" />
                     </Select>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />
                 </headerContent>
 
                 <content>
