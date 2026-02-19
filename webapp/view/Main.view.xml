@@ -38,7 +38,10 @@
 
         <!-- RECHTER INHALT -->
         <detailPages>
-            <Page title="Main View">
+            <Page title="Main View" showHeader="true">
+                <headerContent>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />
+                </headerContent>
                 <content>
                     <Button text="Zur Second View" press="onGoSecond"/>
                     <Button text="Zur Third View" press="onGoThird"/>

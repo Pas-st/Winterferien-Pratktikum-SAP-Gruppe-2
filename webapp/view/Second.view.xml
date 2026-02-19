@@ -40,7 +40,10 @@
         </masterPages>
 
         <detailPages>
-           <Page title="Transaktionen">
+           <Page title="Finanzübersicht" showHeader="true">
+                <headerContent>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />
+                </headerContent>
                 <content>
 
                     <Button

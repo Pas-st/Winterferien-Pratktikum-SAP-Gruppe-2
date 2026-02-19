@@ -38,7 +38,11 @@
         </masterPages>
 
         <detailPages>
-            <Page title="Berichte">
+            <Page title="Berichte" showHeader="true">
+                <headerContent>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />
+                </headerContent>
+
                 <content>
 
                     <HBox width="100%" justifyContent="Center">
