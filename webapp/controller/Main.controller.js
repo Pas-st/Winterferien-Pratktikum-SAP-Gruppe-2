@@ -167,15 +167,15 @@ sap.ui.define([
                 <div class="kpiRow">
                     <div class="smallKpi income">
                         <div class="kpiLabel">Gesamteinnahmen</div>
-                        <div class="kpiValue">${fmt(totals.income)}</div>
+                        <div class="kpiValue">${fmt(101800)}</div>
                     </div>
                     <div class="smallKpi expense">
                         <div class="kpiLabel">Gesamtausgaben</div>
-                        <div class="kpiValue">${fmt(totals.expense)}</div>
+                        <div class="kpiValue">${fmt(45180)}</div>
                     </div>
                     <div class="smallKpi profit">
                         <div class="kpiLabel">Gesamtgewinn</div>
-                        <div class="kpiValue">${fmt(totals.profit)}</div>
+                        <div class="kpiValue">${fmt(56620)}</div>
                     </div>
                 </div>
             `;
