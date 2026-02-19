@@ -8,33 +8,26 @@ sap.ui.define([
 
         onInit: function () {
 
-            // CSS für Summenbox hinzufügen
             this._addSummaryBoxStyles();
 
-            // JSON laden
             const oModel = new JSONModel();
             oModel.loadData("model/entries.json");
 
-            // Wenn JSON geladen ist → Charts + Summen aufbauen
             oModel.attachRequestCompleted(() => {
                 this._entries = oModel.getData().entries;
 
-                // Gesamtsummen berechnen
                 const totalAusgaben = this._getTotal("Ausgabe");
                 const totalEinnahmen = this._getTotal("Einnahme");
 
-                // Wöchentliche Summen berechnen
                 const weeklyAusgaben = this._getWeeklyTotal("Ausgabe");
                 const weeklyEinnahmen = this._getWeeklyTotal("Einnahme");
 
-                // Felder setzen
                 this.byId("txtTotalAusgaben").setText("Ausgaben: " + totalAusgaben + " €");
                 this.byId("txtTotalEinnahmen").setText("Einnahmen: " + totalEinnahmen + " €");
 
-                this.byId("txtWeeklyAusgaben").setText("Wöchentliche Ausgaben: " + weeklyAusgaben + " €");
-                this.byId("txtWeeklyEinnahmen").setText("Wöchentliche Einnahmen: " + weeklyEinnahmen + " €");
+                this.byId("txtWeeklyAusgaben").setText("∅ Wöchentliche Ausgaben: " + weeklyAusgaben + " €");
+                this.byId("txtWeeklyEinnahmen").setText("∅ Wöchentliche Einnahmen: " + weeklyEinnahmen + " €");
 
-                // Box-Styling anwenden
                 this.byId("txtTotalAusgaben").addStyleClass("summaryOuterBox");
                 this.byId("txtTotalEinnahmen").addStyleClass("summaryOuterBox");
 
@@ -44,14 +37,12 @@ sap.ui.define([
                     setTimeout(() => {
                         this._drawPieChart("myPieChart1", this._getChart1Data());
                         this._drawPieChart("myPieChart2", this._getChart2Data());
+                        this._drawLineChart(); // Wochenaggregierter Graph
                     }, 0);
                 });
             });
         },
 
-        // -----------------------------
-        // CSS für Summenbox
-        // -----------------------------
         _addSummaryBoxStyles: function () {
             const style = document.createElement("style");
             style.innerHTML = `
@@ -67,13 +58,14 @@ sap.ui.define([
                     display: inline-block;
                     width: 100%;
                 }
+
+                .paddingBetweenCharts {
+                    margin-top: 190px;
+                }
             `;
             document.head.appendChild(style);
         },
 
-        // -----------------------------
-        // Kalenderwoche berechnen (ISO 8601)
-        // -----------------------------
         _getISOWeek: function (dateString) {
             const date = new Date(dateString);
             const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -83,29 +75,18 @@ sap.ui.define([
             return Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
         },
 
-        // -----------------------------
-        // Wöchentliche Summen berechnen
-        // -----------------------------
         _getWeeklyTotal: function (type) {
+            const entries = this._entries.filter(e => e.type === type);
+            if (entries.length === 0) return 0;
 
-    // alle Einträge des Typs
-    const entries = this._entries.filter(e => e.type === type);
+            const lastEntry = entries[entries.length - 1];
+            const lastWeek = this._getISOWeek(lastEntry.date);
 
-    if (entries.length === 0) return 0;
+            return entries
+                .filter(e => this._getISOWeek(e.date) === lastWeek)
+                .reduce((sum, e) => sum + Number(e.amount), 0);
+        },
 
-    // letzte Woche bestimmen, in der dieser Typ vorkommt
-    const lastEntry = entries[entries.length - 1];
-    const lastWeek = this._getISOWeek(lastEntry.date);
-
-    // Summe dieser Woche berechnen
-    return entries
-        .filter(e => this._getISOWeek(e.date) === lastWeek)
-        .reduce((sum, e) => sum + Number(e.amount), 0);
-},
-
-        // -----------------------------
-        // Chart.js laden
-        // -----------------------------
         _loadChartJs: function () {
             return new Promise((resolve) => {
                 if (window.Chart) {
@@ -120,29 +101,23 @@ sap.ui.define([
             });
         },
 
-        // -----------------------------
-        // Canvas einfügen
-        // -----------------------------
         _injectCanvas: function () {
             this.byId("chartContainer1")
                 .setContent("<canvas id='myPieChart1' style='width:100%; height:350%;'></canvas>");
 
             this.byId("chartContainer2")
                 .setContent("<canvas id='myPieChart2' style='width:100%; height:350%;'></canvas>");
+
+            this.byId("lineChartContainer")
+                .setContent("<canvas id='myLineChart' style='width:100%; height:150%;'></canvas>");
         },
 
-        // -----------------------------
-        // ABSOLUTWERTE berechnen
-        // -----------------------------
         _getTotal: function (type) {
             return this._entries
                 .filter(e => e.type === type)
                 .reduce((sum, e) => sum + Number(e.amount), 0);
         },
 
-        // -----------------------------
-        // Prozentwerte berechnen + gleiche Beschreibungen kombinieren
-        // -----------------------------
         _calculatePercentages: function (type) {
 
             const filtered = this._entries.filter(e => e.type === type);
@@ -168,9 +143,6 @@ sap.ui.define([
             }));
         },
 
-        // -----------------------------
-        // Chart 1 Daten (Ausgaben)
-        // -----------------------------
         _getChart1Data: function () {
             const data = this._calculatePercentages("Ausgabe");
 
@@ -181,9 +153,6 @@ sap.ui.define([
             };
         },
 
-        // -----------------------------
-        // Chart 2 Daten (Einnahmen)
-        // -----------------------------
         _getChart2Data: function () {
             const data = this._calculatePercentages("Einnahme");
 
@@ -194,9 +163,77 @@ sap.ui.define([
             };
         },
 
-        // -----------------------------
-        // Chart zeichnen
-        // -----------------------------
+        // ⭐ NEU: Zeitreihen-Daten pro Kalenderwoche
+        _getTimeSeriesData: function () {
+
+            const sorted = [...this._entries].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const weekly = {};
+
+            sorted.forEach(e => {
+                const kw = this._getISOWeek(e.date);
+
+                if (!weekly[kw]) {
+                    weekly[kw] = { einnahmen: 0, ausgaben: 0 };
+                }
+
+                if (e.type === "Einnahme") {
+                    weekly[kw].einnahmen += Number(e.amount);
+                } else {
+                    weekly[kw].ausgaben += Number(e.amount);
+                }
+            });
+
+            const labels = Object.keys(weekly).map(kw => "KW " + kw);
+            const einnahmen = Object.values(weekly).map(w => w.einnahmen);
+            const ausgaben = Object.values(weekly).map(w => w.ausgaben);
+
+            return { labels, einnahmen, ausgaben };
+        },
+
+        _drawLineChart: function () {
+
+            const data = this._getTimeSeriesData();
+            const ctx = document.getElementById("myLineChart");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: "Einnahmen",
+                            data: data.einnahmen,
+                            borderColor: "#4CAF50",
+                            backgroundColor: "rgba(76,175,80,0.2)",
+                            tension: 0.3
+                        },
+                        {
+                            label: "Ausgaben",
+                            data: data.ausgaben,
+                            borderColor: "#FF5722",
+                            backgroundColor: "rgba(255,87,34,0.2)",
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "Einnahmen & Ausgaben pro Kalenderwoche",
+                            font: { size: 18, weight: "bold" }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        },
+
         _drawPieChart: function (canvasId, chartData) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -229,7 +266,7 @@ sap.ui.define([
                                 weight: "bold"
                             },
                             padding: {
-                                top: 50,
+                                top: 10,
                                 bottom: 20
                             }
                         },
@@ -246,9 +283,6 @@ sap.ui.define([
             });
         },
 
-        // -----------------------------
-        // Navigation
-        // -----------------------------
         onGoSecond: function () {
             this.getOwnerComponent().getRouter().navTo("second");
         },
@@ -267,7 +301,7 @@ sap.ui.define([
                 case "Transaktionen":
                     this.getOwnerComponent().getRouter().navTo("second");
                     break;
-                case "Berichte":
+                case "Bericht":
                     this.getOwnerComponent().getRouter().navTo("third");
                     break;
             }
