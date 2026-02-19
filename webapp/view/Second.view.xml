@@ -3,10 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
-
     <SplitContainer id="secondSplit">
-
-        <!-- LINKES MENÜ -->
         <masterPages>
             <Page title="Finanzübersicht">
                 <List mode="SingleSelectMaster" select="onMenuSelect">
@@ -16,8 +13,6 @@
                 </List>
             </Page>
         </masterPages>
-
-        <!-- DETAIL -->
         <detailPages>
            <Page title="Transaktionen">
 
@@ -37,19 +32,15 @@
                 </headerContent>
 
                 <content>
-
                     <Button
                         text="Eintrag hinzufügen"
                         press="onAddEntry"
                         type="Emphasized"
                         class="sapUiSmallMarginBottom"/>
-
                     <Table
                         id="entryTable"
                         items="{/entries}">
-
                         <columns>
-                            <!-- Datum sortierbar -->
                             <Column id="dateColumn" sortProperty="date" sortIndicator="None" press="onSortDate">
                                 <header>
                                     <Text text="Datum"/>
@@ -60,7 +51,6 @@
                             <Column><Text text="Beschreibung"/></Column>
                             <Column width="5rem"/>
                         </columns>
-
                         <items>
                             <ColumnListItem>
                                 <cells>
@@ -81,12 +71,9 @@
                                 </cells>
                             </ColumnListItem>
                         </items>
-
                     </Table>
-
                 </content>
             </Page>
         </detailPages>
-
     </SplitContainer>
 </mvc:View>
