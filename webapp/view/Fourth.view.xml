@@ -1,0 +1,69 @@
+<mvc:View
+    controllerName="my.app.controller.Fourth"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <SplitContainer id="notFoundSplit">
+
+        <!-- 🔹 LINKES MENÜ -->
+        <masterPages>
+            <Page title="Aureus">
+                <List mode="SingleSelectMaster" selectionChange="onMenuSelect">
+
+                    <StandardListItem 
+                        title="Dashboard" 
+                        icon="sap-icon://home" />
+
+                    <StandardListItem 
+                        title="Transaktionen" 
+                        icon="sap-icon://payment-approval" />
+
+                    <StandardListItem 
+                        title="Berichte" 
+                        icon="sap-icon://business-objects-experience" />
+
+                    <StandardListItem 
+                        title="Einstellungen" 
+                        icon="sap-icon://action-settings" />
+                </List>
+            </Page>
+        </masterPages>
+
+        <!-- 🔹 DETAIL -->
+        <detailPages>
+            <Page showHeader="true" title="fatal error">
+                <headerContent>
+                    <Image src="images/SAP_Logo.svg" alt="Logo" />    
+                </headerContent>
+                <content>
+                    <VBox 
+                        width="100%" 
+                        height="100%" 
+                        alignItems="Center" 
+                        justifyContent="Center">
+
+                        
+                        <core:Icon 
+                            src="sap-icon://error" 
+                            size="5rem" 
+                            color="#BB0000" />
+
+                        <Title 
+                            text="Error: 404" 
+                            level="H1" 
+                            class="sapUiSmallMarginTop" />
+
+                        <Text 
+                            text="Seite nicht gefunden" 
+                            class="sapUiMediumMarginTop" />
+
+                    </VBox>
+                </content>
+
+            </Page>
+        </detailPages>
+
+    </SplitContainer>
+
+</mvc:View>
