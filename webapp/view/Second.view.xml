@@ -11,13 +11,34 @@
         <!-- LINKES MENÜ -->
         <masterPages>
             <Page title="Finanzübersicht">
-                <List mode="SingleSelectMaster" select="onMenuSelect">
-                    <StandardListItem title="Dashboard" type="Active" />
-                    <StandardListItem title="Transaktionen" type="Active" />
-                    <StandardListItem title="Berichte" type="Active" />
+                <List 
+                    mode="SingleSelectMaster" 
+                    selectionChange="onMenuSelect">
+
+                    <StandardListItem 
+                        title="Dashboard" 
+                        type="Inactive"
+                        icon="sap-icon://home" />
+
+                    <StandardListItem 
+                        title="Transaktionen" 
+                        type="Inactive"
+                        icon="sap-icon://payment-approval" />
+                                 
+
+                    <StandardListItem 
+                        title="Berichte" 
+                        type="Inactive"
+                        icon="sap-icon://business-objects-experience" />
+
+                    <StandardListItem 
+                        title="Einstellungen" 
+                        type="Inactive"
+                        icon="sap-icon://action-settings" />
                 </List>
             </Page>
         </masterPages>
+
         <detailPages>
            <Page title="Transaktionen">
                 <content>
