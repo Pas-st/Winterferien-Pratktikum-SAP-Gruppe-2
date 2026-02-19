@@ -19,19 +19,24 @@ sap.ui.define([
             oModel.attachRequestCompleted(() => {
                 this._entries = oModel.getData().entries;
 
-                // Summen berechnen und anzeigen
+                // Gesamtsummen berechnen
                 const totalAusgaben = this._getTotal("Ausgabe");
                 const totalEinnahmen = this._getTotal("Einnahme");
 
-                const txtAus = this.byId("txtTotalAusgaben");
-                const txtEin = this.byId("txtTotalEinnahmen");
+                // Wöchentliche Summen berechnen
+                const weeklyAusgaben = this._getWeeklyTotal("Ausgabe");
+                const weeklyEinnahmen = this._getWeeklyTotal("Einnahme");
 
-                txtAus.setText("Ausgaben: " + totalAusgaben + " €");
-                txtEin.setText("Einnahmen: " + totalEinnahmen + " €");
+                // Felder setzen
+                this.byId("txtTotalAusgaben").setText("Ausgaben: " + totalAusgaben + " €");
+                this.byId("txtTotalEinnahmen").setText("Einnahmen: " + totalEinnahmen + " €");
+
+                this.byId("txtWeeklyAusgaben").setText("Wöchentliche Ausgaben: " + weeklyAusgaben + " €");
+                this.byId("txtWeeklyEinnahmen").setText("Wöchentliche Einnahmen: " + weeklyEinnahmen + " €");
 
                 // Box-Styling anwenden
-                txtAus.addStyleClass("summaryOuterBox");
-                txtEin.addStyleClass("summaryOuterBox");
+                this.byId("txtTotalAusgaben").addStyleClass("summaryOuterBox");
+                this.byId("txtTotalEinnahmen").addStyleClass("summaryOuterBox");
 
                 this._loadChartJs().then(() => {
                     this._injectCanvas();
@@ -65,6 +70,38 @@ sap.ui.define([
             `;
             document.head.appendChild(style);
         },
+
+        // -----------------------------
+        // Kalenderwoche berechnen (ISO 8601)
+        // -----------------------------
+        _getISOWeek: function (dateString) {
+            const date = new Date(dateString);
+            const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = temp.getUTCDay() || 7;
+            temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(temp.getUTCFullYear(), 0, 1));
+            return Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
+        },
+
+        // -----------------------------
+        // Wöchentliche Summen berechnen
+        // -----------------------------
+        _getWeeklyTotal: function (type) {
+
+    // alle Einträge des Typs
+    const entries = this._entries.filter(e => e.type === type);
+
+    if (entries.length === 0) return 0;
+
+    // letzte Woche bestimmen, in der dieser Typ vorkommt
+    const lastEntry = entries[entries.length - 1];
+    const lastWeek = this._getISOWeek(lastEntry.date);
+
+    // Summe dieser Woche berechnen
+    return entries
+        .filter(e => this._getISOWeek(e.date) === lastWeek)
+        .reduce((sum, e) => sum + Number(e.amount), 0);
+},
 
         // -----------------------------
         // Chart.js laden

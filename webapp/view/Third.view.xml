@@ -7,35 +7,39 @@
     <SplitContainer id="thirdSplit">
 
         <masterPages>
-            <Page title="Finanzübersicht">
+            <Page title="Aureus">
                 <List mode="SingleSelectMaster" select="onMenuSelect">
                     <StandardListItem title="Dashboard" type="Active" />
                     <StandardListItem title="Transaktionen" type="Active" />
-                    <StandardListItem title="Berichte" type="Active" />
+                    <StandardListItem title="Bericht" type="Active" />
                 </List>
             </Page>
         </masterPages>
 
         <detailPages>
-            <Page title="Berichte">
+            <Page title="Bericht Q1">
                 <content>
 
-                    <!-- ⭐ SCHICKE BOX UM DIE SUMMEN ⭐ -->
+                    <!-- ⭐ SUMMENBOX ⭐ -->
                     <VBox width="90%" class="summaryOuterBox" alignItems="Center">
                         <HBox width="100%" justifyContent="SpaceAround">
 
+                            <!-- AUSGABEN -->
                             <VBox width="45%" alignItems="Center">
                                 <Text id="txtTotalAusgaben" text="Ausgaben: 0 €" design="Bold" />
+                                <Text id="txtWeeklyAusgaben" text="∅ Wöchentliche Ausgaben: 0 €" />
                             </VBox>
 
+                            <!-- EINNAHMEN -->
                             <VBox width="45%" alignItems="Center">
                                 <Text id="txtTotalEinnahmen" text="Einnahmen: 0 €" design="Bold" />
+                                <Text id="txtWeeklyEinnahmen" text="∅ Wöchentliche Einnahmen: 0 €" />
                             </VBox>
 
                         </HBox>
                     </VBox>
 
-                    <!-- DEINE CHARTS -->
+                    <!-- ⭐ CHARTS ⭐ -->
                     <HBox width="100%" justifyContent="Center">
                         <VBox width="50%" height="400px">
                             <core:HTML id="chartContainer1" />
