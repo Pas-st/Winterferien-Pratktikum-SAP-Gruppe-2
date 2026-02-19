@@ -11,7 +11,6 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter",
     "sap/ui/core/format/DateFormat"
 ], function (
     Controller,
@@ -26,7 +25,6 @@ sap.ui.define([
     JSONModel,
     Filter,
     FilterOperator,
-    Sorter,
     DateFormat
 ) {
     "use strict";
@@ -38,76 +36,38 @@ sap.ui.define([
             oModel.loadData("model/entries.json");
             this.getView().setModel(oModel);
 
-            // Sortierrichtung Datum initial
-            this._bDateDescending = false;
+            this._bDateDescending = false; // initial aufsteigend
         },
 
         // =========================
-        // Datum sortieren
+        // Datum sortieren (Header Click)
         // =========================
         onSortDate: function () {
-            const oTable = this.byId("entryTable");
-            const oBinding = oTable.getBinding("items");
-
-            // Richtung umschalten
             this._bDateDescending = !this._bDateDescending;
-
-            // dd.MM.yy → Date für Sortierung
-            const oSorter = new Sorter("date", this._bDateDescending, false, function(sDate) {
-                if (!sDate) return new Date(0);
-                const aParts = sDate.split(".");
-                return new Date(+("20"+aParts[2]), aParts[1]-1, +aParts[0]);
-            });
-
-            oBinding.sort(oSorter);
-
-            // Caret im Header anzeigen
-            const oColumn = this.byId("dateColumn");
-            if (oColumn) {
-                oColumn.setSortIndicator(this._bDateDescending ? "Descending" : "Ascending");
-            }
+            this._animateSortEntries();
         },
 
         // =========================
-        // Filter
+        // Filter ändern
         // =========================
-        onFilterChange: function (oEvent) {
-            const sKey = oEvent.getSource().getSelectedKey();
-            const oTable = this.byId("entryTable");
-            const oBinding = oTable.getBinding("items");
-
-            let aFilters = [];
-
-            if (sKey === "IN") {
-                aFilters.push(new Filter("type", FilterOperator.EQ, "Einnahme"));
-            } else if (sKey === "OUT") {
-                aFilters.push(new Filter("type", FilterOperator.EQ, "Ausgabe"));
-            }
-
-            oBinding.filter(aFilters);
+        onFilterChange: function () {
+            this._animateSortEntries();
         },
 
         // =========================
-        // Menü-Auswahl
+        // Menü Auswahl
         // =========================
         onMenuSelect: function (oEvent) {
             const selected = oEvent.getParameter("listItem").getTitle();
-
             switch (selected) {
-                case "Dashboard":
-                    this.getOwnerComponent().getRouter().navTo("main");
-                    break;
-                case "Transaktionen":
-                    this.getOwnerComponent().getRouter().navTo("second");
-                    break;
-                case "Berichte":
-                    this.getOwnerComponent().getRouter().navTo("third");
-                    break;
+                case "Dashboard": this.getOwnerComponent().getRouter().navTo("main"); break;
+                case "Transaktionen": this.getOwnerComponent().getRouter().navTo("second"); break;
+                case "Berichte": this.getOwnerComponent().getRouter().navTo("third"); break;
             }
         },
 
         // =========================
-        // Dialog (Add/Edit)
+        // Add / Edit Dialog
         // =========================
         _openEntryDialog: function (oContext, iIndex) {
             const oView = this.getView();
@@ -127,19 +87,14 @@ sap.ui.define([
                 buttons: [ new RadioButton({ text: "Einnahme" }), new RadioButton({ text: "Ausgabe" }) ]
             });
 
-            // Dialog erstellen
             const oDialog = new Dialog({
                 title: bEdit ? "Eintrag bearbeiten" : "Eintrag hinzufügen",
                 content: new VerticalLayout({
                     content: [
-                        new Label({ text: "Datum" }),
-                        oDatePicker,
-                        new Label({ text: "Betrag (€)" }),
-                        oAmountInput,
-                        new Label({ text: "Beschreibung" }),
-                        oDescriptionInput,
-                        new Label({ text: "Typ" }),
-                        oRadioGroup
+                        new Label({ text: "Datum" }), oDatePicker,
+                        new Label({ text: "Betrag (€)" }), oAmountInput,
+                        new Label({ text: "Beschreibung" }), oDescriptionInput,
+                        new Label({ text: "Typ" }), oRadioGroup
                     ]
                 })
             });
@@ -163,33 +118,21 @@ sap.ui.define([
                         description: oDescriptionInput.getValue()
                     };
 
-                    if (bEdit) {
-                        aEntries[iIndex] = oData;
-                    } else {
-                        aEntries.push(oData);
-                    }
+                    if (bEdit) aEntries[iIndex] = oData;
+                    else aEntries.push(oData);
 
                     oModel.setProperty("/entries", aEntries);
 
-                    // Filter neu anwenden
-                    const oSelect = this.byId("typeFilter");
-                    if (oSelect) {
-                        this.onFilterChange({ getSource: () => oSelect });
-                    }
+                    // Tabelle animiert sortieren + Filter anwenden
+                    this._animateSortEntries();
 
                     oDialog.close();
                 }
             });
 
-            const oCancelButton = new Button({
-                text: "Abbrechen",
-                press: () => oDialog.close()
-            });
-
             oDialog.setBeginButton(oSaveButton);
-            oDialog.setEndButton(oCancelButton);
+            oDialog.setEndButton(new Button({ text: "Abbrechen", press: () => oDialog.close() }));
 
-            // Validierung
             const validate = () => {
                 const bValid =
                     oDatePicker.getDateValue() &&
@@ -203,24 +146,14 @@ sap.ui.define([
             oAmountInput.attachLiveChange(validate);
             oDescriptionInput.attachLiveChange(validate);
             oRadioGroup.attachSelect(validate);
-
             validate();
+
             oDialog.open();
         },
 
         // =========================
-        // Button Handler
+        // Delete Handler
         // =========================
-        onAddEntry: function () { this._openEntryDialog(); },
-
-        onEditEntry: function (oEvent) {
-            const oItem = oEvent.getSource().getParent().getParent();
-            const oTable = this.byId("entryTable");
-            const iIndex = oTable.indexOfItem(oItem);
-            const oEntry = this.getView().getModel().getProperty("/entries")[iIndex];
-            this._openEntryDialog(oEntry, iIndex);
-        },
-
         onDeleteEntry: function (oEvent) {
             const oItem = oEvent.getSource().getParent().getParent();
             const oTable = this.byId("entryTable");
@@ -231,11 +164,68 @@ sap.ui.define([
             aEntries.splice(iIndex, 1);
             oModel.setProperty("/entries", aEntries);
 
-            // Filter nach Löschen neu anwenden
+            this._animateSortEntries();
+        },
+
+        onAddEntry: function () { this._openEntryDialog(); },
+        onEditEntry: function (oEvent) {
+            const oItem = oEvent.getSource().getParent().getParent();
+            const oTable = this.byId("entryTable");
+            const iIndex = oTable.indexOfItem(oItem);
+            const oEntry = this.getView().getModel().getProperty("/entries")[iIndex];
+            this._openEntryDialog(oEntry, iIndex);
+        },
+
+        // =========================
+        // Animierte Sortierung + Filter
+        // =========================
+        _animateSortEntries: function (iStepDelay = 1) {
+            const oModel = this.getView().getModel();
+            let aEntries = [...oModel.getProperty("/entries")];
+
+            // 1️⃣ Filter anwenden
             const oSelect = this.byId("typeFilter");
-            if (oSelect) {
-                this.onFilterChange({ getSource: () => oSelect });
-            }
+            let sKey = "ALL";
+            if (oSelect) sKey = oSelect.getSelectedKey();
+            if (sKey === "IN") aEntries = aEntries.filter(e => e.type === "Einnahme");
+            else if (sKey === "OUT") aEntries = aEntries.filter(e => e.type === "Ausgabe");
+
+            // 2️⃣ Sortieren animiert
+            let aSorted = [];
+            let i = 0;
+            const step = () => {
+                if (i >= aEntries.length) return;
+
+                const current = aEntries[i];
+                let inserted = false;
+                for (let j = 0; j < aSorted.length; j++) {
+                    const dateCurrent = this._parseDate(current.date);
+                    const dateSorted = this._parseDate(aSorted[j].date);
+                    if ((this._bDateDescending && dateCurrent > dateSorted) ||
+                        (!this._bDateDescending && dateCurrent < dateSorted)) {
+                        aSorted.splice(j, 0, current);
+                        inserted = true;
+                        break;
+                    }
+                }
+                if (!inserted) aSorted.push(current);
+
+                oModel.setProperty("/entries", [...aSorted, ...aEntries.slice(i+1)]);
+
+                i++;
+                setTimeout(step, iStepDelay);
+            };
+            step();
+
+            // 3️⃣ Caret setzen
+            const oColumn = this.byId("dateColumn");
+            if (oColumn) oColumn.setSortIndicator(this._bDateDescending ? "Descending" : "Ascending");
+        },
+
+        _parseDate: function (sDate) {
+            if (!sDate) return new Date(0);
+            const a = sDate.split(".");
+            return new Date(+("20"+a[2]), a[1]-1, +a[0]);
         }
 
     });
