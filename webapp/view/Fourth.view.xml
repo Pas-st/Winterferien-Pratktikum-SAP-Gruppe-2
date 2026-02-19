@@ -44,10 +44,10 @@
                         justifyContent="Center">
 
                         
-                        
+
 
                         <Title 
-                            text="404" 
+                            text="Error: 404" 
                             level="H1" 
                             class="sapUiSmallMarginTop" />
 
