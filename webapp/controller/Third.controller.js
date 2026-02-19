@@ -65,9 +65,27 @@ sap.ui.define([
             `;
             document.head.appendChild(style);
         },
+        _parseDate: function (dateString) {
+    // ISO-Format: 2026-01-02
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return new Date(dateString);
+    }
+
+    // Punkt-Format: 02.01.26 oder 02.01.2026
+    if (/^\d{2}\.\d{2}\.\d{2,4}$/.test(dateString)) {
+        const parts = dateString.split(".");
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10) - 1;
+        let year = parts[2].length === 2 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    }
+
+    console.warn("Unbekanntes Datumsformat:", dateString);
+    return new Date(dateString);
+},
 
         _getISOWeek: function (dateString) {
-            const date = new Date(dateString);
+            const date = this._parseDate(dateString);
             const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
             const dayNum = temp.getUTCDay() || 7;
             temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
