@@ -3,6 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
+    
     <SplitContainer id="secondSplit">
         <masterPages>
             <Page title="Aureus">
@@ -19,7 +20,6 @@
                         title="Transaktionen" 
                         type="Inactive"
                         icon="sap-icon://payment-approval" />
-                                 
 
                     <StandardListItem 
                         title="Berichte" 
@@ -35,12 +35,8 @@
         </masterPages>
 
         <detailPages>
-           <Page title="Finanzübersicht" showHeader="true">
-                <headerContent>
-                    <Image src="images/SAP_Logo.svg" alt="Logo" />
-                </headerContent>
-                <content>
-
+            <Page title="Finanzübersicht" showHeader="true">
+                
                 <!-- FILTER OBEN RECHTS -->
                 <headerContent>
                     <Select
@@ -62,20 +58,29 @@
                         press="onAddEntry"
                         type="Emphasized"
                         class="sapUiSmallMarginBottom"/>
+
                     <Table
                         id="entryTable"
                         items="{/entries}">
+                        
                         <columns>
-                            <Column id="dateColumn" sortProperty="date" sortIndicator="None" press="onSortDate">
+                            <Column sortProperty="date" sortIndicator="None" press="onSortDate">
                                 <header>
                                     <Text text="Datum"/>
                                 </header>
                             </Column>
-                            <Column><Text text="Betrag (€)"/></Column>
-                            <Column><Text text="Einnahme/Ausgabe"/></Column>
-                            <Column><Text text="Beschreibung"/></Column>
+                            <Column>
+                                <header><Text text="Betrag (€)"/></header>
+                            </Column>
+                            <Column>
+                                <header><Text text="Einnahme/Ausgabe"/></header>
+                            </Column>
+                            <Column>
+                                <header><Text text="Beschreibung"/></header>
+                            </Column>
                             <Column width="5rem"/>
                         </columns>
+
                         <items>
                             <ColumnListItem>
                                 <cells>
@@ -96,6 +101,7 @@
                                 </cells>
                             </ColumnListItem>
                         </items>
+
                     </Table>
                 </content>
             </Page>
