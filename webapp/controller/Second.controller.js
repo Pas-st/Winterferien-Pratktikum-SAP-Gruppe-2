@@ -34,32 +34,28 @@ sap.ui.define([
 
             this._bDateDescending = false; // initial aufsteigend
 
-            // Originaldaten zwischenspeichern, nachdem sie geladen sind
             oModel.attachRequestCompleted(() => {
-                this._aAllEntries = [...oModel.getProperty("/entries")];
+                // jedem Eintrag eine eindeutige ID zuweisen
+                this._aAllEntries = oModel.getProperty("/entries").map((e, idx) => ({ ...e, __id: idx }));
                 this._applySortAndFilter();
             });
         },
 
-        // Sortierung per Spaltenclick
         onSortDate: function () {
             this._bDateDescending = !this._bDateDescending;
             this._applySortAndFilter();
         },
 
-        // Sortierung per Dropdown
         onSortChange: function (oEvent) {
             const sKey = oEvent.getParameter("selectedItem").getKey();
             this._bDateDescending = (sKey === "DOWN");
             this._applySortAndFilter();
         },
 
-        // Filter ändern
         onFilterChange: function () {
             this._applySortAndFilter();
         },
 
-        // Menü Auswahl links
         onMenuSelect: function (oEvent) {
             const selected = oEvent.getParameter("listItem").getTitle();
             switch (selected) {
@@ -70,7 +66,6 @@ sap.ui.define([
             }
         },
 
-        // Dialog für Add/Edit
         _openEntryDialog: function (oContext, iIndex) {
             const oView = this.getView();
             const bEdit = !!oContext;
@@ -106,19 +101,17 @@ sap.ui.define([
                 enabled: false,
                 type: "Emphasized",
                 press: () => {
-                    const oModel = oView.getModel();
                     const oDateObj = oDatePicker.getDateValue();
-                    const oDateFormat = DateFormat.getDateInstance({ pattern: "dd.MM.yy" });
-                    const sFormattedDate = oDateObj ? oDateFormat.format(oDateObj) : "";
+                    const sFormattedDate = oDateObj ? DateFormat.getDateInstance({ pattern: "dd.MM.yy" }).format(oDateObj) : "";
 
                     const oData = {
                         date: sFormattedDate,
                         amount: oAmountInput.getValue(),
                         type: oRadioGroup.getSelectedIndex() === 0 ? "Einnahme" : "Ausgabe",
-                        description: oDescriptionInput.getValue()
+                        description: oDescriptionInput.getValue(),
+                        __id: bEdit ? oContext.__id : Date.now() // eindeutige ID
                     };
 
-                    // Original-Liste aktualisieren
                     if (bEdit) this._aAllEntries[iIndex] = oData;
                     else this._aAllEntries.push(oData);
 
@@ -149,45 +142,41 @@ sap.ui.define([
         },
 
         onAddEntry: function () { this._openEntryDialog(); },
+
         onEditEntry: function (oEvent) {
-            const oItem = oEvent.getSource().getParent().getParent();
-            const oTable = this.byId("entryTable");
-            const iIndex = oTable.indexOfItem(oItem);
+            const oContext = oEvent.getSource().getBindingContext();
+            const sId = oContext.getProperty("__id");
+            const iIndex = this._aAllEntries.findIndex(e => e.__id === sId);
             const oEntry = this._aAllEntries[iIndex];
             this._openEntryDialog(oEntry, iIndex);
         },
 
         onDeleteEntry: function (oEvent) {
-            const oItem = oEvent.getSource().getParent().getParent();
-            const oTable = this.byId("entryTable");
-            const iIndex = oTable.indexOfItem(oItem);
+            const oContext = oEvent.getSource().getBindingContext();
+            const sId = oContext.getProperty("__id");
+            const iIndex = this._aAllEntries.findIndex(e => e.__id === sId);
 
             this._aAllEntries.splice(iIndex, 1);
             this._applySortAndFilter();
         },
 
-        // Filter + Sortierung anwenden (nur Anzeige)
         _applySortAndFilter: function () {
             const oModel = this.getView().getModel();
-            let aEntries = [...this._aAllEntries]; // alle Originaldaten
+            let aEntries = [...this._aAllEntries];
 
-            // Filter nach Typ
             const oSelect = this.byId("typeFilter");
             const sKey = oSelect ? oSelect.getSelectedKey() : "ALL";
             if (sKey === "IN") aEntries = aEntries.filter(e => e.type === "Einnahme");
             else if (sKey === "OUT") aEntries = aEntries.filter(e => e.type === "Ausgabe");
 
-            // Sortieren nach Datum
             aEntries.sort((a, b) => {
                 const dA = this._parseDate(a.date);
                 const dB = this._parseDate(b.date);
                 return this._bDateDescending ? dB - dA : dA - dB;
             });
 
-            // Anzeige aktualisieren
             oModel.setProperty("/entries", aEntries);
 
-            // SortIndicator setzen
             const oColumn = this.byId("dateColumn");
             if (oColumn) oColumn.setSortIndicator(this._bDateDescending ? "Descending" : "Ascending");
         },
