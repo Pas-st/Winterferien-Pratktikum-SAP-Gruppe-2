@@ -44,7 +44,10 @@
                         justifyContent="Center">
 
                         
-
+                        <core:Icon 
+                            src="sap-icon://error" 
+                            size="5rem" 
+                            color="#BB0000" />
 
                         <Title 
                             text="Error: 404" 
