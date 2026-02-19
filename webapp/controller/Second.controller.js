@@ -66,6 +66,7 @@ sap.ui.define([
                 case "Dashboard": this.getOwnerComponent().getRouter().navTo("main"); break;
                 case "Transaktionen": this.getOwnerComponent().getRouter().navTo("second"); break;
                 case "Berichte": this.getOwnerComponent().getRouter().navTo("third"); break;
+                case "Einstellungen": this.getOwnerComponent().getRouter().navTo("fourth"); break;
             }
         },
 

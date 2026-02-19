@@ -322,6 +322,9 @@ sap.ui.define([
                 case "Bericht":
                     this.getOwnerComponent().getRouter().navTo("third");
                     break;
+                case "Einstellungen":
+                    this.getOwnerComponent().getRouter().navTo("fourth");
+                    break;
             }
         }
 

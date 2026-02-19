@@ -42,6 +42,11 @@
           "pattern": "third",
           "name": "third",
           "target": "third"
+        },
+        {
+          "pattern": "fourth",
+          "name": "fourth",
+          "target": "fourth"
         }
       ],
       "targets": {
@@ -53,6 +58,9 @@
         },
         "third": {
           "viewName": "Third"
+        },
+        "fourth": {
+          "viewName": "Fourth"
         }
       }
     }

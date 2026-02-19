@@ -394,6 +394,7 @@ sap.ui.define([
             if (sTitle === "Dashboard")     { oRouter.navTo("main"); }
             if (sTitle === "Transaktionen") { oRouter.navTo("second"); }
             if (sTitle === "Berichte")      { oRouter.navTo("third"); }
+            if (sTitle === "Einstellungen") { oRouter.navTo("fourth"); }
         }
     });
 });
