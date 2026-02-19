@@ -32,7 +32,7 @@
 
         <!-- 🔹 DETAIL -->
         <detailPages>
-            <Page showHeader="true" title="fatal error">
+            <Page showHeader="true" title="System ERROR">
                 <headerContent>
                     <Image src="images/SAP_Logo.svg" alt="Logo" />    
                 </headerContent>
@@ -50,12 +50,12 @@
                             color="#BB0000" />
 
                         <Title 
-                            text="Error: 404" 
+                            text="E404. That's an error." 
                             level="H1" 
                             class="sapUiSmallMarginTop" />
 
                         <Text 
-                            text="Seite nicht gefunden" 
+                            text="The requested URL was not found on this server. That's all we know." 
                             class="sapUiMediumMarginTop" />
 
                     </VBox>
