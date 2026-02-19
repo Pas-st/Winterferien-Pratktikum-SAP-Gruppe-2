@@ -1,14 +1,9 @@
 <mvc:View
     controllerName="my.app.controller.Second"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-
-    
-
-
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
     <SplitContainer id="secondSplit">
-
-        <!-- LINKES MENÜ -->
         <masterPages>
             <Page title="Aureus">
                 <List 
@@ -46,24 +41,41 @@
                 </headerContent>
                 <content>
 
+                <!-- FILTER OBEN RECHTS -->
+                <headerContent>
+                    <Select
+                        id="typeFilter"
+                        width="10rem"
+                        selectedKey="ALL"
+                        change="onFilterChange">
+                        <items>
+                            <core:Item key="ALL" text="Alle"/>
+                            <core:Item key="IN" text="Einnahmen"/>
+                            <core:Item key="OUT" text="Ausgaben"/>
+                        </items>
+                    </Select>
+                </headerContent>
+
+                <content>
                     <Button
                         text="Eintrag hinzufügen"
                         press="onAddEntry"
                         type="Emphasized"
                         class="sapUiSmallMarginBottom"/>
-
                     <Table
                         id="entryTable"
                         items="{/entries}">
-
                         <columns>
-                            <Column><Text text="Datum"/></Column>
+                            <Column id="dateColumn" sortProperty="date" sortIndicator="None" press="onSortDate">
+                                <header>
+                                    <Text text="Datum"/>
+                                </header>
+                            </Column>
                             <Column><Text text="Betrag (€)"/></Column>
                             <Column><Text text="Einnahme/Ausgabe"/></Column>
                             <Column><Text text="Beschreibung"/></Column>
                             <Column width="5rem"/>
                         </columns>
-
                         <items>
                             <ColumnListItem>
                                 <cells>
@@ -71,7 +83,6 @@
                                     <Text text="{amount}"/>
                                     <Text text="{type}"/>
                                     <Text text="{description}"/>
-
                                     <HBox>
                                         <Button
                                             icon="sap-icon://decline"
@@ -85,10 +96,7 @@
                                 </cells>
                             </ColumnListItem>
                         </items>
-
                     </Table>
-
-
                 </content>
             </Page>
         </detailPages>
